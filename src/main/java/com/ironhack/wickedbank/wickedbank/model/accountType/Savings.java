@@ -18,35 +18,28 @@ public class Savings extends Account {
 
     public Savings() {
     }
-    public Savings(String secretKey, Long ownerId, LocalDate creationDate, Status status) {
-        super(secretKey, ownerId, creationDate, status);
+    public Savings(String secretKey, Long ownerId) {
+        super(secretKey, ownerId);
         setBalance(new Money( new BigDecimal("1000")));
     }
-    public Savings(Money balance, String secretKey, Long ownerId, LocalDate creationDate, Status status) {
-        super(balance, secretKey, ownerId, creationDate, status);
+    public Savings(Money balance, String secretKey, Long ownerId) {
+        super(balance, secretKey, ownerId);
         if(balance.getAmount().compareTo(new BigDecimal("100"))<0){
             setBalance(new Money( new BigDecimal("100")));
         }
     }
-    public Savings(Money balance, String secretKey, Long ownerId, LocalDate creationDate, Status status,BigDecimal interestRate) {
-        super(balance, secretKey, ownerId, creationDate, status);
+    public Savings(Money balance, String secretKey, Long ownerId, BigDecimal interestRate) {
+        super(balance, secretKey, ownerId);
         if(balance.getAmount().compareTo(new BigDecimal("100"))<0){
             setBalance(new Money( new BigDecimal("100")));
         }
         setInterestRate(interestRate);
     }
 
-    public Savings(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, LocalDate creationDate, Status status,BigDecimal interestRate) {
-        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee, creationDate, status);
+    public Savings(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, BigDecimal interestRate) {
+        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee);
         setInterestRate(interestRate);
     }
-
-    public Savings(BigDecimal interestRate) {
-        this.interestRate = interestRate;
-    }
-
-
-
     public BigDecimal getInterestRate() {
         return interestRate;
     }

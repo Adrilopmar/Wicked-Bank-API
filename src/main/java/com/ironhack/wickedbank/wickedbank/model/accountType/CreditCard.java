@@ -18,17 +18,17 @@ public class CreditCard extends Account {
 
     public CreditCard() {
     }
-    public CreditCard(Money balance, String secretKey, Long ownerId, LocalDate creationDate, Status status) {
-        super(balance, secretKey, ownerId, creationDate, status);
+    public CreditCard(Money balance, String secretKey, Long ownerId) {
+        super(balance, secretKey, ownerId);
     }
-    public CreditCard(Money balance, String secretKey, Long ownerId, LocalDate creationDate, Status status, Money creditLimit, BigDecimal interestRate) {
-        super(balance, secretKey, ownerId, creationDate, status);
+    public CreditCard(Money balance, String secretKey, Long ownerId, Money creditLimit, BigDecimal interestRate) {
+        super(balance, secretKey, ownerId);
         setCreditLimit(creditLimit);
         setInterestRate(interestRate);
     }
 
-    public CreditCard(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, LocalDate creationDate, Status status, Money creditLimit, BigDecimal interestRate) {
-        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee, creationDate, status);
+    public CreditCard(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, Money creditLimit, BigDecimal interestRate) {
+        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee);
         setCreditLimit(creditLimit);
         setInterestRate(interestRate);
     }

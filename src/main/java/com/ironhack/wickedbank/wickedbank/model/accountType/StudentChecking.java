@@ -18,11 +18,11 @@ public class StudentChecking extends Account {
     public StudentChecking() {
     }
 
-    public StudentChecking(Money balance, String secretKey, Long ownerId, LocalDate creationDate, Status status) {
-        super(balance, secretKey, ownerId, creationDate, status);
+    public StudentChecking(Money balance, String secretKey, Long ownerId) {
+        super(balance, secretKey, ownerId);
     }
 
-    public StudentChecking(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, LocalDate creationDate, Status status) {
-        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee, creationDate, status);
+    public StudentChecking(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee) {
+        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee);
     }
 }

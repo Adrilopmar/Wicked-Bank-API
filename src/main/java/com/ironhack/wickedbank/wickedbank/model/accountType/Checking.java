@@ -21,18 +21,18 @@ public class Checking extends Account {
     public Checking() {
     }
 
-    public Checking(String secretKey, Long ownerId, LocalDate creationDate, Status status) {
-        super(secretKey, ownerId, creationDate, status);
+    public Checking(String secretKey, Long ownerId) {
+        super(secretKey, ownerId);
     }
 
-    public Checking(Money balance, String secretKey, Long ownerId, LocalDate creationDate, Status status, Money minimumBalance, Money monthlyMaintenanceFee) {
-        super(balance, secretKey, ownerId, creationDate, status);
+    public Checking(Money balance, String secretKey, Long ownerId, Money minimumBalance, Money monthlyMaintenanceFee) {
+        super(balance, secretKey, ownerId);
         setMinimumBalance(minimumBalance);
         setMonthlyMaintenanceFee(monthlyMaintenanceFee);
     }
 //
-    public Checking(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, LocalDate creationDate, Status status, Money minimumBalance, Money monthlyMaintenanceFee) {
-        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee, creationDate, status);
+    public Checking(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, Money minimumBalance, Money monthlyMaintenanceFee) {
+        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee);
         setMinimumBalance(minimumBalance);
         setMonthlyMaintenanceFee(monthlyMaintenanceFee);
     }

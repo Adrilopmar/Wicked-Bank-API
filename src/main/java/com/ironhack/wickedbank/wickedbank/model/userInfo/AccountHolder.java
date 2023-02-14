@@ -1,6 +1,7 @@
 package com.ironhack.wickedbank.wickedbank.model.userInfo;
 
 import com.ironhack.wickedbank.wickedbank.classes.Address;
+import com.ironhack.wickedbank.wickedbank.enums.Role;
 import com.ironhack.wickedbank.wickedbank.model.User;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -14,6 +15,7 @@ public class AccountHolder extends User {
     @Embedded
     private Address address;
     private String mailingAddress;
+    private final Role role = Role.ACCOUNT_HOLDER;
 
 
     public AccountHolder() {}

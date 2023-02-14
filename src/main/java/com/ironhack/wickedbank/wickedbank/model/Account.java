@@ -27,8 +27,8 @@ public abstract class Account {
     private Long ownerId;
     private String secondaryOwner;
     private BigDecimal penaltyFee;
-    private LocalDate creationDate;
-    private Status status;
+    private LocalDate creationDate = LocalDate.now();
+    private Status status = Status.ACTIVE;
     @ManyToMany
     @JoinTable(
             name = "account_link_user",
@@ -41,43 +41,31 @@ public abstract class Account {
     }
     public Account(
             String secretKey,
-            Long ownerId,
-            LocalDate creationDate,
-            Status status) {
+            Long ownerId) {
         this.secretKey = secretKey;
         this.ownerId = ownerId;
         this.penaltyFee = new BigDecimal("40");
-        this.creationDate = creationDate;
-        this.status = status;
     }
     public Account(
                    Money balance,
                    String secretKey,
-                   Long ownerId,
-                   LocalDate creationDate,
-                   Status status) {
+                   Long ownerId) {
         this.balance = balance;
         this.secretKey = secretKey;
         this.ownerId = ownerId;
         this.penaltyFee = new BigDecimal("40");
-        this.creationDate = creationDate;
-        this.status = status;
     }
 
     public Account(Money balance,
                    String secretKey,
                    Long ownerId,
                    String secondaryOwner,
-                   BigDecimal penaltyFee,
-                   LocalDate creationDate,
-                   Status status) {
+                   BigDecimal penaltyFee) {
         this.balance = balance;
         this.secretKey = secretKey;
         this.ownerId = ownerId;
         this.secondaryOwner = secondaryOwner;
         this.penaltyFee = penaltyFee;
-        this.creationDate = creationDate;
-        this.status = status;
     }
     public void isLessThanMinimum(){}
 

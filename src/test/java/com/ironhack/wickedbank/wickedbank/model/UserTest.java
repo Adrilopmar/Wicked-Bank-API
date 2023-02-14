@@ -49,11 +49,11 @@ class UserTest {
         userRepository.save(thirdParty);
 
         // accounts =============================
-        studentChecking = new StudentChecking(new Money(new BigDecimal("10.50")),"123456",accountHolder.getUserId(),creationDate, Status.ACTIVE);
+        studentChecking = new StudentChecking(new Money(new BigDecimal("10.50")),"123456",accountHolder.getUserId());
         accountRepository.save(studentChecking);
-        savings = new Savings(new Money(new BigDecimal("100")),"123456",accountHolder.getUserId(),creationDate,Status.ACTIVE,new BigDecimal("1"));
+        savings = new Savings(new Money(new BigDecimal("100")),"123456",accountHolder.getUserId(),new BigDecimal("1"));
         accountRepository.save(savings);
-        creditCard = new CreditCard(new Money(new BigDecimal("50")),"123",accountHolder.getUserId(),creationDate,Status.FROZEN,new Money( new BigDecimal("250")),new BigDecimal("0.285"));
+        creditCard = new CreditCard(new Money(new BigDecimal("50")),"123",accountHolder.getUserId(),new Money( new BigDecimal("250")),new BigDecimal("0.285"));
         accountRepository.save(creditCard);
 
 
@@ -66,11 +66,11 @@ class UserTest {
 //        accountRepository.deleteAll();
     }
     @Test
-    public void addUser_AddUserSuccessfully(){
+    public void addUser_CorrectData_GetFromDatabase(){
         assertEquals(3,userRepository.findAll().size());
     }
     @Test
-    public void addAccount_AddAccountSuccessfully(){
+    public void addAccount_CorrectData_GetFromDatabase(){
         assertEquals(3,accountRepository.findAll().size());
     }
 }
