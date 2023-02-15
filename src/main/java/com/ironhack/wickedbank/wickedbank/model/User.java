@@ -3,6 +3,7 @@ package com.ironhack.wickedbank.wickedbank.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -13,7 +14,7 @@ public abstract class User {
     private Long userId;
 
     private String name;
-    @ManyToMany(mappedBy="owners")
+    @ManyToMany(mappedBy="owners",fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Account> accounts;
 
@@ -38,5 +39,20 @@ public abstract class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", name='" + name + '\'' +
+                ", accounts=" + accounts +
+                '}';
     }
 }
