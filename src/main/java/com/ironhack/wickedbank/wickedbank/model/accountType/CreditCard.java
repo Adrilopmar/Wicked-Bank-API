@@ -4,8 +4,7 @@ import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.enums.Status;
 import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.model.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,6 +12,11 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "accountId")
 public class CreditCard extends Account {
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "credit_limit")),
+            @AttributeOverride(name = "currency", column = @Column(insertable = false,updatable=false))
+    })
         private Money creditLimit = new Money( new BigDecimal("100"));
         private BigDecimal interestRate =new BigDecimal("0.2");
 
@@ -27,8 +31,8 @@ public class CreditCard extends Account {
         setInterestRate(interestRate);
     }
 
-    public CreditCard(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, Money creditLimit, BigDecimal interestRate) {
-        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee);
+    public CreditCard(Money balance, String secretKey, Long ownerId, Long secondaryOwner, Money creditLimit, BigDecimal interestRate) {
+        super(balance, secretKey, ownerId, secondaryOwner);
         setCreditLimit(creditLimit);
         setInterestRate(interestRate);
     }

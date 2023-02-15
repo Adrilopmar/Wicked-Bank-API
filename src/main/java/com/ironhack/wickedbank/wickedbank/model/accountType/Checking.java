@@ -3,9 +3,7 @@ package com.ironhack.wickedbank.wickedbank.model.accountType;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.enums.Status;
 import com.ironhack.wickedbank.wickedbank.model.Account;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,9 +12,14 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "accountId")
 public class Checking extends Account {
 
-    private Money minimumBalance = new Money(new BigDecimal("250"));
-
+//    private Money minimumBalance = new Money(new BigDecimal("250"));
+@Embedded
+@AttributeOverrides({
+        @AttributeOverride(name = "amount", column = @Column(name = "monthly_maintenance")),
+        @AttributeOverride(name = "currency", column = @Column(insertable = false,updatable=false))
+})
     private Money monthlyMaintenanceFee = new Money(new BigDecimal("12"));
+    private LocalDate birthDate;
 
     public Checking() {
     }
@@ -25,29 +28,29 @@ public class Checking extends Account {
         super(secretKey, ownerId);
     }
 
-    public Checking(Money balance, String secretKey, Long ownerId, Money minimumBalance, Money monthlyMaintenanceFee) {
+    public Checking(Money balance, String secretKey, Long ownerId, Money monthlyMaintenanceFee) {
         super(balance, secretKey, ownerId);
-        setMinimumBalance(minimumBalance);
+//        setMinimumBalance(minimumBalance);
         setMonthlyMaintenanceFee(monthlyMaintenanceFee);
     }
 //
-    public Checking(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee, Money minimumBalance, Money monthlyMaintenanceFee) {
-        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee);
-        setMinimumBalance(minimumBalance);
+    public Checking(Money balance, String secretKey, Long ownerId, Long secondaryOwner, Money monthlyMaintenanceFee) {
+        super(balance, secretKey, ownerId, secondaryOwner);
+//        setMinimumBalance(minimumBalance);
         setMonthlyMaintenanceFee(monthlyMaintenanceFee);
     }
 
-    public Money getMinimumBalance() {
-        return minimumBalance;
-    }
+//    public Money getMinimumBalance() {
+//        return minimumBalance;
+//    }
 
-    public void setMinimumBalance(Money minimumBalance) {
-        if(minimumBalance.getAmount().compareTo(new BigDecimal("250"))<0){
-            this.minimumBalance = new Money(new BigDecimal("250"));
-        }else {
-            this.minimumBalance = minimumBalance;
-        }
-    }
+//    public void setMinimumBalance(Money minimumBalance) {
+//        if(minimumBalance.getAmount().compareTo(new BigDecimal("250"))<0){
+//            this.minimumBalance = new Money(new BigDecimal("250"));
+//        }else {
+//            this.minimumBalance = minimumBalance;
+//        }
+//    }
 
     public Money getMonthlyMaintenanceFee() {
         return monthlyMaintenanceFee;

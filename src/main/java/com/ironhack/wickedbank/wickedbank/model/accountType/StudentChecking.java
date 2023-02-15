@@ -4,6 +4,7 @@ import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.enums.Status;
 import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.model.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 @Entity
 @PrimaryKeyJoinColumn(name = "accountId")
 public class StudentChecking extends Account {
+
     public StudentChecking() {
     }
 
@@ -22,7 +24,7 @@ public class StudentChecking extends Account {
         super(balance, secretKey, ownerId);
     }
 
-    public StudentChecking(Money balance, String secretKey, Long ownerId, String secondaryOwner, BigDecimal penaltyFee) {
-        super(balance, secretKey, ownerId, secondaryOwner, penaltyFee);
+    public StudentChecking(Money balance, String secretKey, Long ownerId, Long secondaryOwner) {
+        super(balance, secretKey, ownerId, secondaryOwner);
     }
 }
