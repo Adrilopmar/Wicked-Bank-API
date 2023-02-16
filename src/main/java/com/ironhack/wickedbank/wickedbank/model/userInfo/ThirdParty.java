@@ -1,6 +1,5 @@
 package com.ironhack.wickedbank.wickedbank.model.userInfo;
 
-import com.ironhack.wickedbank.wickedbank.enums.Role;
 import com.ironhack.wickedbank.wickedbank.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
@@ -9,7 +8,6 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 @PrimaryKeyJoinColumn(name = "userId")
 public class ThirdParty extends User {
     private String hashedKey;
-    private final Role role = Role.THIRD_PARTY;
 
     public ThirdParty() {
     }
