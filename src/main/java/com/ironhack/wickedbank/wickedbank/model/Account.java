@@ -1,5 +1,7 @@
 package com.ironhack.wickedbank.wickedbank.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.enums.Status;
 import com.ironhack.wickedbank.wickedbank.enums.Type;
@@ -21,11 +23,13 @@ public abstract class Account {
             @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     private Money balance;
+    @JsonIgnore
     private String secretKey;
 //    @ManyToOne
 //    @JoinColumn(name = "owner")
 //    private User user;
     private Long ownerId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long secondaryOwner;
     @Embedded
     @AttributeOverrides({

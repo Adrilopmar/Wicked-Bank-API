@@ -1,5 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.model.userInfo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ironhack.wickedbank.wickedbank.classes.Address;
 import com.ironhack.wickedbank.wickedbank.enums.Role;
 import com.ironhack.wickedbank.wickedbank.model.User;
@@ -11,9 +12,12 @@ import java.time.LocalDate;
 @Entity
 @PrimaryKeyJoinColumn(name = "userId")
 public class AccountHolder extends User {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate dateOfBirth;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Embedded
     private Address address;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String mailingAddress;
     private final Role role = Role.ACCOUNT_HOLDER;
 

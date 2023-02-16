@@ -1,5 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.model.accountType;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.enums.Status;
 import com.ironhack.wickedbank.wickedbank.model.Account;
@@ -19,6 +20,7 @@ public class Checking extends Account {
         @AttributeOverride(name = "currency", column = @Column(insertable = false,updatable=false))
 })
     private Money monthlyMaintenanceFee = new Money(new BigDecimal("12"));
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate birthDate;
 
     public Checking() {

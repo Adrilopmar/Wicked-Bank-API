@@ -14,6 +14,7 @@ public abstract class User {
     private Long userId;
 
     private String name;
+    @JsonIgnore
     private String password;
     @ManyToMany(mappedBy="owners",fetch = FetchType.EAGER)
     @JsonIgnore
