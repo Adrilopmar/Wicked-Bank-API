@@ -9,6 +9,7 @@ import com.ironhack.wickedbank.wickedbank.controler.dto.accountholder.create.Acc
 import com.ironhack.wickedbank.wickedbank.controler.dto.admin.AdminDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.checking.create.CheckingDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.savings.create.SavingsDto;
+import com.ironhack.wickedbank.wickedbank.controler.dto.thirdparty.create.ThirdPartyDto;
 import com.ironhack.wickedbank.wickedbank.enums.Type;
 import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
@@ -271,7 +272,31 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void createThirdParty_CorrectData_Result() {
-
+    void createThirdParty_CorrectData_Result() throws Exception {
+        ThirdPartyDto thirdPartyDto = new ThirdPartyDto();
+        thirdPartyDto.setName("chuso");
+        thirdPartyDto.setPassword("123123");
+        thirdPartyDto.setHashedKey("makena");
+        String body = objectMapper.writeValueAsString(thirdPartyDto);
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/admin/new/third-party")
+                                .content(body)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isCreated())
+                .andReturn();
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("makena"));
+    }
+    @Test
+    void createThirdParty_IncorrectData_Error() throws Exception {
+        ThirdPartyDto thirdPartyDto = new ThirdPartyDto();
+        String body = objectMapper.writeValueAsString(thirdPartyDto);
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/admin/new/third-party")
+                                .content(body)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest())
+                .andReturn();
     }
 }
