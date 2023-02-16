@@ -1,4 +1,4 @@
-package com.ironhack.wickedbank.wickedbank.controler.interfaces;
+package com.ironhack.wickedbank.wickedbank.controler.interfaces.admin;
 
 import com.ironhack.wickedbank.wickedbank.controler.dto.checking.create.CheckingDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.creditcard.create.CreditCardDto;
