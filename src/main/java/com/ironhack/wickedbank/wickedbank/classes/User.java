@@ -9,6 +9,8 @@ public abstract class User {
     private String name;
     @NotNull
     private String password;
+    @NotNull
+    private String username;
 
     public String getName() {
         return name;
@@ -26,4 +28,10 @@ public abstract class User {
         this.password = password;
     }
 
+    public String getUsername() {
+        return username;
+    }
+    public void setUserName(String username) {
+        this.username = username;
+    }
 }

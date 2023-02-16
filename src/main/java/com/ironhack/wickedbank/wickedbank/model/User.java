@@ -14,11 +14,16 @@ public abstract class User {
     private Long userId;
 
     private String name;
+    private String username;
     @JsonIgnore
     private String password;
     @ManyToMany(mappedBy="owners",fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Account> accounts;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="user_id")
+    private List<Role> roles;
 
     public User() {
     }
@@ -57,12 +62,19 @@ public abstract class User {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", name='" + name + '\'' +
-                ", accounts=" + accounts +
-                '}';
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

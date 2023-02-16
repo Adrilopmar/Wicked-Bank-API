@@ -1,6 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.service.impl;
 
-import com.ironhack.wickedbank.wickedbank.enums.Role;
+import com.ironhack.wickedbank.wickedbank.model.Role;
 import com.ironhack.wickedbank.wickedbank.model.User;
 import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +16,11 @@ import java.util.Set;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
-
     @Autowired
     private UserRepository userRepository;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//
 //        Optional<User> optionalUser = userRepository.findByUsername(username);
 //        // Check if user is present
 //        if(!optionalUser.isPresent()) {
@@ -40,9 +34,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 //
 //        // Return a Spring Security User with my User username, password and roles
 //        return new org.springframework.security.core.userdetails.User(
-//                optionalUser.get().getUsername(),
+//                optionalUser.get().getName(),
 //                optionalUser.get().getPassword(),
 //                authorities);
-//    }
+        return null;
+    }
 }
 
