@@ -207,6 +207,7 @@ public class AdminServiceImpl implements AdminService {
        thirdParty.setHashedKey(dto.getHashedKey());
        thirdParty.setPassword(dto.getPassword());
        thirdParty.setName(dto.getName());
+       userRepository.save(thirdParty);
        return thirdParty;
     }
 
