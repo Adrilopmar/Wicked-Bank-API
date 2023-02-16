@@ -1,17 +1,16 @@
 package com.ironhack.wickedbank.wickedbank.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ironhack.wickedbank.wickedbank.classes.Address;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
+import com.ironhack.wickedbank.wickedbank.controler.dto.DeleteDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.accountholder.create.AccountHolderDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.admin.AdminDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.checking.create.CheckingDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.savings.create.SavingsDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.thirdparty.create.ThirdPartyDto;
 import com.ironhack.wickedbank.wickedbank.enums.Type;
-import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.model.accountType.StudentChecking;
@@ -31,14 +30,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,14 +68,22 @@ class AdminServiceImplTest {
 
     @BeforeEach
     void setUp() {
+
+        objectMapper.registerModule(new JavaTimeModule());
+        // Admin ===================================
+        admin =new Admin();
+        admin.setName("GodFeather");
+        admin.setPassword("tomaBobo");
+        adminRepository.save(admin);
+
+
+
+        // users ===================================
         Address address =new Address("fake");
         LocalDate localDate = LocalDate.of(1991, 06, 26);
         LocalDate localDateTest = LocalDate.of(1993, 01, 10);
         LocalDate localDateTeen = LocalDate.of(2015, 03, 15);
         LocalDate creationDate = LocalDate.of(2023, 02, 13);
-        // users ===================================
-//        Optional<Account> opAcc = accountRepository.findById(1L);
-//        if(!opAcc.isPresent()){
 
         accountHolder= new AccountHolder("Sir.Duck",localDate,address,"asd@asd.com");
 //        accountHolder= new AccountHolder("Sir.Duck",localDate,address,"asd@asd.com");
@@ -86,14 +92,21 @@ class AdminServiceImplTest {
         userRepository.save(accountHolder);
         userRepository.save(accountHolderTeen);
         userRepository.save(creditCardHolder);
-//        }
 
-        objectMapper.registerModule(new JavaTimeModule());
+        // Accounts ================================
+
+        creditCard = new CreditCard();
+        studentChecking = new StudentChecking();
+        savings = new Savings();
+        accountRepository.save(creditCard);
+        accountRepository.save(studentChecking);
+        accountRepository.save(savings);
+
     }
 
     @AfterEach
     void tearDown() {
-
+        adminRepository.deleteAll();
         accountRepository.deleteAll();
         userRepository.deleteAll();
 
@@ -198,7 +211,7 @@ class AdminServiceImplTest {
     }
 //    @Test
 //    void checkUserInDatabase_IncorrectData_Result() {
-//        assertEquals(HttpStatus.NOT_FOUND,adminService.checkUserInDatabase(9999L));
+//        assertEquals(ResponseStatusException.class,adminService.checkUserInDatabase(9999L));
 //    }
 
     @Test
@@ -219,8 +232,6 @@ class AdminServiceImplTest {
     }
     @Test
     void createAdmin_SecondAdminCreated_NotAllowed() throws Exception {
-        Admin firstAdmin =new Admin();
-        userRepository.save(firstAdmin);
         AdminDto adminDto = new AdminDto();
         adminDto.setName("pablo");
         adminDto.setPassword("123123");
@@ -299,4 +310,38 @@ class AdminServiceImplTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
+    @Test
+    void deleteUser_CorrectCredentialsAndData_DeleteUserById() throws Exception {
+        DeleteDto deleteDto = new DeleteDto();
+        deleteDto.setName(admin.getName());
+        deleteDto.setPassword(admin.getPassword());
+        String body = objectMapper.writeValueAsString(deleteDto);
+        MvcResult mvcResult = mockMvc.perform(
+                        delete("/admin/delete/user/"+accountHolder.getUserId())
+                                .param("userId",String.valueOf(accountHolder.getUserId()))
+                                .content(body)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isAccepted())
+                .andReturn();
+        assertFalse(userRepository.findById(accountHolder.getUserId()).isPresent());
+    }
+
+    @Test
+    void deleteAccount_CorrectCredentialsAndData_DeleteAccountById() throws Exception {
+        DeleteDto deleteDto = new DeleteDto();
+        deleteDto.setName(admin.getName());
+        deleteDto.setPassword(admin.getPassword());
+        String body = objectMapper.writeValueAsString(deleteDto);
+        MvcResult mvcResult = mockMvc.perform(
+                        delete("/admin/delete/account/"+creditCard.getAccountId())
+                                .param("accountId",String.valueOf(creditCard.getAccountId()))
+                                .content(body)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isAccepted())
+                .andReturn();
+        assertFalse(accountRepository.findById(creditCard.getAccountId()).isPresent());
+    }
+
 }
