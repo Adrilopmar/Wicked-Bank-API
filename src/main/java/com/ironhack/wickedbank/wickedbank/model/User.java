@@ -14,6 +14,7 @@ public abstract class User {
     private Long userId;
 
     private String name;
+    private String password;
     @ManyToMany(mappedBy="owners",fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Account> accounts;
@@ -45,6 +46,14 @@ public abstract class User {
     }
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
