@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ironhack.wickedbank.wickedbank.classes.Address;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
-import com.ironhack.wickedbank.wickedbank.controler.dto.DeleteDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.accountholder.create.AccountHolderDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.admin.AdminDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.checking.create.CheckingDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.savings.create.SavingsDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.thirdparty.create.ThirdPartyDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.DeleteDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.accountholder.create.AccountHolderDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.admin.AdminDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.checking.create.CheckingDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.savings.create.SavingsDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.thirdparty.create.ThirdPartyDto;
 import com.ironhack.wickedbank.wickedbank.enums.Type;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -113,7 +112,7 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void createSaving_AdminFromApi_Result() throws Exception {
+    void createSaving_DefaultData_Result() throws Exception {
         SavingsDto savingsDto = new SavingsDto();
         savingsDto.setSecretKey("yaya");
         savingsDto.setOwnerId(accountHolder.getUserId());
@@ -125,7 +124,7 @@ class AdminServiceImplTest {
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("yaya"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Duck"));
     }
 
     @Test
@@ -197,7 +196,7 @@ class AdminServiceImplTest {
         creditDto.setSecretKey("123123");
         String body = objectMapper.writeValueAsString(creditDto);
         MvcResult mvcResult = mockMvc.perform(
-                        post("/admin/new/creditcard")
+                        post("/admin/new/credit-card")
                                 .content(body)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -209,10 +208,10 @@ class AdminServiceImplTest {
     void checkUserInDatabase_CorrectData_Result() {
         assertTrue(adminService.checkUserInDatabase(accountHolder.getUserId()));
     }
-//    @Test
-//    void checkUserInDatabase_IncorrectData_Result() {
-//        assertEquals(ResponseStatusException.class,adminService.checkUserInDatabase(9999L));
-//    }
+    @Test
+    void checkUserInDatabase_IncorrectData_Result() {
+        assertThrows(ResponseStatusException.class,()->adminService.checkUserInDatabase(9999L));
+    }
 
     @Test
     void createAdmin_FirstAdminCreatedCorrectly_Result() throws Exception {
@@ -220,6 +219,7 @@ class AdminServiceImplTest {
         AdminDto adminDto = new AdminDto();
         adminDto.setName("adri");
         adminDto.setPassword("123123");
+        adminDto.setUserName("trapis");
         String body = objectMapper.writeValueAsString(adminDto);
         MvcResult mvcResult = mockMvc.perform(
                         post("/admin/new/admin")
@@ -228,29 +228,31 @@ class AdminServiceImplTest {
                 )
                 .andExpect(status().isCreated())
                 .andReturn();
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("123"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("ADMIN"));
     }
-    @Test
-    void createAdmin_SecondAdminCreated_NotAllowed() throws Exception {
-        AdminDto adminDto = new AdminDto();
-        adminDto.setName("pablo");
-        adminDto.setPassword("123123");
-        String body = objectMapper.writeValueAsString(adminDto);
-        MvcResult mvcResult = mockMvc.perform(
-                        post("/admin/new/admin")
-                                .content(body)
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isForbidden())
-                .andReturn();
-        assertEquals(403,mvcResult.getResponse().getStatus());
-    }
+//    @Test
+//    void createAdmin_SecondAdminCreated_NotAllowed() throws Exception {
+//        AdminDto adminDto = new AdminDto();
+//        adminDto.setName("pablo");
+//        adminDto.setPassword("123123");
+//        adminDto.setUserName("popo");
+//        String body = objectMapper.writeValueAsString(adminDto);
+//        MvcResult mvcResult = mockMvc.perform(
+//                        post("/admin/new/admin")
+//                                .content(body)
+//                                .contentType(MediaType.APPLICATION_JSON)
+//                )
+//                .andExpect(status().isForbidden())
+//                .andReturn();
+//        assertEquals(403,mvcResult.getResponse().getStatus());
+//    }
 
     @Test
     void createAccountHolder_CorrectDefaultData_Result() throws Exception {
         AccountHolderDto accHolderDto = new AccountHolderDto();
         accHolderDto.setName("chuso");
         accHolderDto.setPassword("123123");
+        accHolderDto.setUserName("makena");
         String body = objectMapper.writeValueAsString(accHolderDto);
         MvcResult mvcResult = mockMvc.perform(
                         post("/admin/new/account-holder")
@@ -267,6 +269,7 @@ class AdminServiceImplTest {
         accHolderDto.setName("chuso");
         accHolderDto.setPassword("123123");
         accHolderDto.setMailingAddress("chuso@chuso");
+        accHolderDto.setUserName("makena");
         accHolderDto.setDateOfBirth(LocalDate.of(1996,05,30));
         accHolderDto.setAddress(new Address("feka avenue"));
         String body = objectMapper.writeValueAsString(accHolderDto);
@@ -288,6 +291,7 @@ class AdminServiceImplTest {
         thirdPartyDto.setName("chuso");
         thirdPartyDto.setPassword("123123");
         thirdPartyDto.setHashedKey("makena");
+        thirdPartyDto.setUserName("makena");
         String body = objectMapper.writeValueAsString(thirdPartyDto);
         MvcResult mvcResult = mockMvc.perform(
                         post("/admin/new/third-party")

@@ -1,16 +1,16 @@
 package com.ironhack.wickedbank.wickedbank.service.impl;
 
 import com.ironhack.wickedbank.wickedbank.classes.Money;
-import com.ironhack.wickedbank.wickedbank.controler.dto.DeleteDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.accountholder.create.AccountHolderDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.admin.AdminDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.checking.create.CheckingDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.creditcard.create.CreditCardDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.savings.create.SavingsDto;
-import com.ironhack.wickedbank.wickedbank.controler.dto.thirdparty.create.ThirdPartyDto;
-import com.ironhack.wickedbank.wickedbank.enums.Role;
+import com.ironhack.wickedbank.wickedbank.controller.dto.DeleteDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.accountholder.create.AccountHolderDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.admin.AdminDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.checking.create.CheckingDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.creditcard.create.CreditCardDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.savings.create.SavingsDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.thirdparty.create.ThirdPartyDto;
 import com.ironhack.wickedbank.wickedbank.enums.Type;
 import com.ironhack.wickedbank.wickedbank.model.Account;
+import com.ironhack.wickedbank.wickedbank.model.Role;
 import com.ironhack.wickedbank.wickedbank.model.User;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Checking;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
@@ -26,6 +26,7 @@ import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,8 +44,11 @@ public class AdminServiceImpl implements AdminService {
     AccountHolderRepository accountHolderRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public Savings createSaving(SavingsDto dto) {
+//        Optional<User> ac = userRepository.findByName(username);
         Savings account= new Savings(); // create new saving account
         List<User> owners =new ArrayList<>(); // create list for owners
         List<Account> accountList = new ArrayList<>();
@@ -163,9 +167,11 @@ public class AdminServiceImpl implements AdminService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Balance can not be less than 100");
             } else if (dto.getBalance().getAmount().compareTo(new BigDecimal("100000"))>0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Balance can not be higher than 100000");
-            } else {
+            }else {
                 account.setBalance(dto.getBalance());
             }
+        } else {
+            account.setBalance(new Money( new BigDecimal("0")));
         }
         account.setType(Type.CREDIT_CARD);
         account.setOwners(owners);
@@ -174,22 +180,23 @@ public class AdminServiceImpl implements AdminService {
         accountRepository.save(account);
         return account;
     }
-    public Admin createAdmin(AdminDto adminDto) {
+    public Admin createAdmin(AdminDto dto) {
         Admin admin = new Admin();
-        Optional<Admin> optionalAdmin = Optional.ofNullable(adminRepository.findAllByRole(Role.ADMIN));
-        if (!optionalAdmin.isPresent()){
-            admin.setName(adminDto.getName());
-            admin.setPassword(adminDto.getPassword());
-            userRepository.save(admin);
-            return admin;
-        }else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"This application only supports 1 admin.");
-        }
+        Role adminRole = new Role("ADMIN");
+        admin.setRoles(List.of(adminRole));
+        admin.setName(dto.getName());
+        admin.setUsername(dto.getUsername());
+        admin.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userRepository.save(admin);
+        return admin;
     }
     public AccountHolder createAccountHolder(AccountHolderDto dto) {
         AccountHolder accountHolder = new AccountHolder();
         accountHolder.setName(dto.getName());
-        accountHolder.setPassword(dto.getPassword());
+        accountHolder.setPassword(passwordEncoder.encode(dto.getPassword()));
+        accountHolder.setUsername(dto.getUsername());
+        Role role = new Role("ACCOUNT_HOLDER");
+        accountHolder.setRoles(List.of(role));
         if (dto.getAddress()!= null){
             accountHolder.setAddress(dto.getAddress());
         }
@@ -205,9 +212,11 @@ public class AdminServiceImpl implements AdminService {
 
     public ThirdParty createThirdParty(ThirdPartyDto dto) {
        ThirdParty thirdParty = new ThirdParty();
-       thirdParty.setHashedKey(dto.getHashedKey());
-       thirdParty.setPassword(dto.getPassword());
-       thirdParty.setName(dto.getName());
+        Role role = new Role("THIRD_PARTY");
+        thirdParty.setRoles(List.of(role));
+        thirdParty.setHashedKey(dto.getHashedKey());
+        thirdParty.setPassword(passwordEncoder.encode(dto.getPassword()));
+        thirdParty.setName(dto.getName());
        userRepository.save(thirdParty);
        return thirdParty;
     }
