@@ -1,6 +1,7 @@
 package com.ironhack.wickedbank.wickedbank.service.impl;
 
 import com.ironhack.wickedbank.wickedbank.classes.Money;
+import com.ironhack.wickedbank.wickedbank.controler.dto.DeleteDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.accountholder.create.AccountHolderDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.admin.AdminDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.checking.create.CheckingDto;
@@ -211,12 +212,48 @@ public class AdminServiceImpl implements AdminService {
        return thirdParty;
     }
 
+    public void deleteUser(Long userId, DeleteDto dto) {
+        Optional<Admin> optionalAdmin = Optional.ofNullable(adminRepository.findByName(dto.getName()));
+        if (optionalAdmin.isPresent()){
+            if(optionalAdmin.get().getPassword().equals(dto.getPassword())){
+                if(checkUserInDatabase(userId)){
+                    userRepository.delete(userRepository.findById(userId).get());
+                }
+            }else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid credentials");
+            }
+        }else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid credentials");
+        }
+    }
+    public void deleteAccount(Long accountId, DeleteDto dto) {
+        Optional<Admin> optionalAdmin = Optional.ofNullable(adminRepository.findByName(dto.getName()));
+        if (optionalAdmin.isPresent()){
+            if(optionalAdmin.get().getPassword().equals(dto.getPassword())){
+                if(checkAccountInDatabase(accountId)){
+                    accountRepository.delete(accountRepository.findById(accountId).get());
+                }
+            }else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid credentials");
+            }
+        }else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid credentials");
+        }
+    }
     public Boolean checkUserInDatabase(Long userId){
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()){ //check if user exist in db
             return true;
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
+        }
+    }
+    public Boolean checkAccountInDatabase(Long accountId){
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (optionalAccount.isPresent()){ //check if user exist in db
+            return true;
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Account not found");
         }
     }
 }

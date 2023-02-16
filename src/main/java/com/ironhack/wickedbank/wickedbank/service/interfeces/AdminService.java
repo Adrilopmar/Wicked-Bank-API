@@ -1,5 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.service.interfeces;
 
+import com.ironhack.wickedbank.wickedbank.controler.dto.DeleteDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.accountholder.create.AccountHolderDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.admin.AdminDto;
 import com.ironhack.wickedbank.wickedbank.controler.dto.checking.create.CheckingDto;
@@ -19,4 +20,6 @@ public interface AdminService {
     Admin createAdmin(AdminDto adminDto);
     AccountHolder createAccountHolder(AccountHolderDto accountHolderDto);
     ThirdParty createThirdParty(ThirdPartyDto thirdPartyDto);
+    void deleteUser(Long userId, DeleteDto deleteDto);
+    void deleteAccount(Long accountId, DeleteDto deleteDto);
 }
