@@ -57,13 +57,12 @@ class UserTest {
         accountRepository.save(creditCard);
 
 
-
     }
 
     @AfterEach
     void tearDown() {
-//        userRepository.deleteAll();
-//        accountRepository.deleteAll();
+        userRepository.deleteAll();
+        accountRepository.deleteAll();
     }
     @Test
     public void addUser_CorrectData_GetFromDatabase(){

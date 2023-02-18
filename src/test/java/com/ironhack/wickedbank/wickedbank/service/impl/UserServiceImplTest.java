@@ -1,9 +1,17 @@
 package com.ironhack.wickedbank.wickedbank.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ironhack.wickedbank.wickedbank.classes.Address;
+import com.ironhack.wickedbank.wickedbank.classes.Money;
+import com.ironhack.wickedbank.wickedbank.controller.dto.transaction.transactionDto;
+import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
+import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
+import com.ironhack.wickedbank.wickedbank.model.accountType.StudentChecking;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.AccountHolder;
+import com.ironhack.wickedbank.wickedbank.model.userInfo.Admin;
+import com.ironhack.wickedbank.wickedbank.model.userInfo.ThirdParty;
 import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
 import com.ironhack.wickedbank.wickedbank.repository.AdminRepository;
 import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
@@ -12,38 +20,89 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @SpringBootTest
+@AutoConfigureMockMvc
 class UserServiceImplTest {
 
     @Autowired
     UserRepository userRepository;
     @Autowired
     UserService userService;
-
-
+    @Autowired
+    AccountRepository accountRepository;
+    @Autowired
+    MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
-
     private AccountHolder accountHolder;
+    private Admin admin;
+    private ThirdParty thirdParty;
+    private StudentChecking studentChecking;
+    private CreditCard creditCard;
+    private Savings savings;
+    private AccountHolder accountHolderTeen;
+    private AccountHolder creditCardHolder;
     @BeforeEach
     void setUp() {
+        objectMapper.registerModule(new JavaTimeModule());
+        // Admin ===================================
+//        admin =new Admin();
+//        admin.setName("GodFeather");
+//        admin.setPassword("tomaBobo");
+//        adminRepository.save(admin);
+
+
+
+        // users ===================================
         Address address =new Address("fake");
         LocalDate localDate = LocalDate.of(1991, 06, 26);
+        LocalDate localDateTest = LocalDate.of(1993, 01, 10);
+        LocalDate localDateTeen = LocalDate.of(2015, 03, 15);
+        LocalDate creationDate = LocalDate.of(2023, 02, 13);
+
         accountHolder= new AccountHolder("Sir.Duck",localDate,address,"asd@asd.com");
+//        accountHolder= new AccountHolder("Sir.Duck",localDate,address,"asd@asd.com");
+        accountHolderTeen= new AccountHolder("Elena",localDateTeen,address,"123@123.com");
+        creditCardHolder= new AccountHolder("Rafa",localDateTest,address,"hhh@hhh.com");
         userRepository.save(accountHolder);
-        objectMapper.registerModule(new JavaTimeModule());
+        userRepository.save(accountHolderTeen);
+        userRepository.save(creditCardHolder);
+
+        // Accounts ================================
+
+        creditCard = new CreditCard();
+        creditCard.setOwnerId(creditCardHolder.getUserId());
+        creditCard.setBalance(new Money(new BigDecimal("1500")));
+        studentChecking = new StudentChecking();
+        studentChecking.setOwnerId(accountHolderTeen.getUserId());
+        studentChecking.setBalance(new Money(new BigDecimal("900")));
+        savings = new Savings();
+        savings.setOwnerId(accountHolder.getUserId());
+        savings.setBalance(new Money(new BigDecimal("600")));
+
+        accountRepository.save(creditCard);
+        accountRepository.save(studentChecking);
+        accountRepository.save(savings);
     }
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAll();
+//        userRepository.deleteAll();
+//        accountRepository.deleteAll();
     }
 
     @Test
@@ -52,6 +111,44 @@ class UserServiceImplTest {
     }
     @Test
     void findUserById_IncorrectId_NotFound() {
-        assertEquals(ResponseStatusException.class ,userService.findUserById(99999L));
+        assertThrows(ResponseStatusException.class, ()->userService.findUserById(99999L));
+    }
+    @Test
+    void newTransaction_CorrectData_SuccessfulTransaction() throws Exception {
+        transactionDto dto = new transactionDto();
+        dto.setSenderAccountId(creditCard.getAccountId());
+        dto.setReceiverAccountId(studentChecking.getAccountId());
+        dto.setAmount(new Money(new BigDecimal("100")));
+        String body = objectMapper.writeValueAsString(dto);
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/users/"+creditCardHolder.getUserId()+"/transaction/"+accountHolderTeen.getUserId())
+                                .param("senderId", String.valueOf(creditCardHolder.getUserId()))
+                                .param("receiverId", String.valueOf(accountHolderTeen.getUserId()))
+                                .content(body)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isAccepted())
+                .andReturn();
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Rafa"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("100"));
+    }
+    @Test
+    void newTransaction_SameAccountData_Declined() throws Exception {
+        transactionDto dto = new transactionDto();
+        dto.setSenderAccountId(7L);
+        dto.setReceiverAccountId(7L);
+        dto.setAmount(new Money(new BigDecimal("100")));
+        String body = objectMapper.writeValueAsString(dto);
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/users/7/transaction/7")
+                                .param("senderId","7")
+                                .param("receiverId","7")
+                                .content(body)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isMethodNotAllowed())
+                .andReturn();
+        assertThrows(ResponseStatusException.class,()->userService.newTransaction(7L,7L,dto));
+
     }
 }
