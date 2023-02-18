@@ -20,9 +20,7 @@ public class AccountGetGetControllerImpl implements AccountGetController {
     @Autowired
     AccountService accountService;
 
-    @GetMapping("/all")
-    public List<Account> getAllAccounts(){return accountRepository.findAll();}
-    @GetMapping("/{accountId}")
-    public Account getAccountById(@PathVariable Long accountId){
+    @GetMapping("/my-account/{accountId}")
+    public Account getUserAccountById(@PathVariable Long accountId){
         return accountService.getAccountById(accountId);}
 }

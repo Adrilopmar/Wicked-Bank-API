@@ -3,13 +3,24 @@ package com.ironhack.wickedbank.wickedbank.controller.dto.creditcard.create;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
+
 public class CreditCardDto {
     private Money balance;
     @NotNull
     private String secretKey;
     @NotNull
     private Long ownerId;
+    private BigDecimal interestRate;
     private Long secondaryOwner;
+
+    public BigDecimal getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(BigDecimal interestRate) {
+        this.interestRate = interestRate;
+    }
 
     public Money getBalance() {
         return balance;

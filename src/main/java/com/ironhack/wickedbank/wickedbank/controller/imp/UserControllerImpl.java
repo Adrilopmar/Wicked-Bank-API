@@ -24,14 +24,8 @@ public class UserControllerImpl implements UserControler {
     @Autowired
     ThirdPartyRepository thirdPartyRepository;
 
-    @GetMapping("/all")
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-    @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Long userId){
-        return userService.findUserById(userId);
-    }
+
+
 //    @GetMapping("/role/admin")
 //    public List<User> getAllByRole(){
 //        return userRepository.findAllByRoles("ADMIN");

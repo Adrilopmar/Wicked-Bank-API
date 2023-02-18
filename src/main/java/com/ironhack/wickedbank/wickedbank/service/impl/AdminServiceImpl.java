@@ -173,6 +173,9 @@ public class AdminServiceImpl implements AdminService {
         } else {
             account.setBalance(new Money( new BigDecimal("0")));
         }
+        if(dto.getInterestRate()!= null){
+            account.setInterestRate(dto.getInterestRate());
+        }
         account.setType(Type.CREDIT_CARD);
         account.setOwners(owners);
         account.setOwner(dto.getOwnerId());

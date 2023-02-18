@@ -8,6 +8,7 @@ import com.ironhack.wickedbank.wickedbank.controller.dto.DeleteDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.accountholder.create.AccountHolderDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.admin.AdminDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.checking.create.CheckingDto;
+import com.ironhack.wickedbank.wickedbank.controller.dto.creditcard.create.CreditCardDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.savings.create.SavingsDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.thirdparty.create.ThirdPartyDto;
 import com.ironhack.wickedbank.wickedbank.enums.Type;
@@ -159,7 +160,7 @@ class AdminServiceImplTest {
     }
     @Test
     void createCreditCard_DefaultData_Result() throws Exception {
-        CreditCard creditDto = new CreditCard();
+        CreditCardDto creditDto = new CreditCardDto();
         creditDto.setOwnerId(creditCardHolder.getUserId());
         creditDto.setSecretKey("123123");
         String body = objectMapper.writeValueAsString(creditDto);
@@ -174,7 +175,7 @@ class AdminServiceImplTest {
     }
     @Test
     void createCreditCard_InputAllDataCorrect_Result() throws Exception {
-        CreditCard creditDto = new CreditCard();
+        CreditCardDto creditDto = new CreditCardDto();
         creditDto.setOwnerId(creditCardHolder.getUserId());
         creditDto.setSecretKey("123123");
         creditDto.setBalance(new Money(new BigDecimal("300")));
@@ -191,7 +192,7 @@ class AdminServiceImplTest {
     }
     @Test
     void createCreditCard_UserNotRegisteredInDatabase_UserNotFound() throws Exception {
-        CreditCard creditDto = new CreditCard();
+        CreditCardDto creditDto = new CreditCardDto();
         creditDto.setOwnerId(9999L);
         creditDto.setSecretKey("123123");
         String body = objectMapper.writeValueAsString(creditDto);

@@ -18,6 +18,9 @@ public class Money {
 
     public Money() {
     }
+    public Money(String balance){
+        setAmount(new BigDecimal(balance));
+    }
 
     /**
      * Class constructor specifying amount, currency, and rounding

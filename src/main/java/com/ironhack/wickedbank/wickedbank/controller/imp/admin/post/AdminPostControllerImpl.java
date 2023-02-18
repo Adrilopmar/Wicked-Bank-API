@@ -26,6 +26,7 @@ public class AdminPostControllerImpl implements AdminControler {
     @Autowired
     AdminService adminService;
 
+    // ========================= Accounts =============================
     @PostMapping("/saving")
     @ResponseStatus(HttpStatus.CREATED)
     public Savings createSaving(@RequestBody @Valid SavingsDto savingsDto){//, Authentication authentication
@@ -42,6 +43,8 @@ public class AdminPostControllerImpl implements AdminControler {
     public CreditCard createCreditCard(@RequestBody @Valid CreditCardDto creditCardDto) {
         return adminService.createCreditCard(creditCardDto);
     }
+
+    // ========================= Users =============================
     @PostMapping("/admin")
     @ResponseStatus(HttpStatus.CREATED)
     public Admin AddAdmin(@RequestBody @Valid AdminDto adminDto) {
