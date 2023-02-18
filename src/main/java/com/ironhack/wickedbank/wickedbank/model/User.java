@@ -24,6 +24,9 @@ public abstract class User {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     private List<Role> roles;
+    @OneToMany(mappedBy = "senderId",cascade = CascadeType.ALL)
+//    @JsonIgnore
+    private List<Transaction> transactions;
 
     public User() {
     }

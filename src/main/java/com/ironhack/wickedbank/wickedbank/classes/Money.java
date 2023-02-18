@@ -1,5 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.classes;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
@@ -10,10 +11,9 @@ import java.util.Currency;
 public class Money {
     private static final Currency USD = Currency.getInstance("USD");
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_EVEN;
-
-    @Column(insertable=false, updatable=false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Currency currency;
-    @Column(insertable=false, updatable=false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private BigDecimal amount;
 
     public Money() {

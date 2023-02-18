@@ -102,14 +102,6 @@ public abstract class Account {
         this.secretKey = secretKey;
     }
 
-    public Long getOwner() {
-        return ownerId;
-    }
-
-    public void setOwner(Long ownerId) {
-        this.ownerId = ownerId;
-    }
-
     public Long getSecondaryOwner() {
         return secondaryOwner;
     }

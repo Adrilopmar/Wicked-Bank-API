@@ -82,7 +82,7 @@ public class AdminServiceImpl implements AdminService {
         }
         account.setType(Type.SAVINGS);
         account.setOwners(owners);
-        account.setOwner(dto.getOwnerId());
+        account.setOwnerId(dto.getOwnerId());
         account.setSecretKey(dto.getSecretKey()); // encrypt needed
 //        accountList.add(account);
 //        optionalUser.get().setAccounts(accountList);
@@ -126,7 +126,7 @@ public class AdminServiceImpl implements AdminService {
             }
             studentChecking.setType(Type.STUDENT_CHECKING);
             studentChecking.setOwners(owners);
-            studentChecking.setOwner(dto.getOwnerId());
+            studentChecking.setOwnerId(dto.getOwnerId());
             studentChecking.setSecretKey(dto.getSecretKey());
             accountRepository.save(studentChecking);
         }else {
@@ -141,7 +141,7 @@ public class AdminServiceImpl implements AdminService {
             }
             account.setType(Type.CHECKING);
             account.setOwners(owners);
-            account.setOwner(dto.getOwnerId());
+            account.setOwnerId(dto.getOwnerId());
             account.setSecretKey(dto.getSecretKey());
             accountRepository.save(account);
         }
@@ -178,7 +178,7 @@ public class AdminServiceImpl implements AdminService {
         }
         account.setType(Type.CREDIT_CARD);
         account.setOwners(owners);
-        account.setOwner(dto.getOwnerId());
+        account.setOwnerId(dto.getOwnerId());
         account.setSecretKey(dto.getSecretKey());
         accountRepository.save(account);
         return account;

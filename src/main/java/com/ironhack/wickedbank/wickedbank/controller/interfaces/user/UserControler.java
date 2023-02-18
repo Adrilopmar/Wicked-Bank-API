@@ -1,4 +1,4 @@
-package com.ironhack.wickedbank.wickedbank.controller.interfaces;
+package com.ironhack.wickedbank.wickedbank.controller.interfaces.user;
 
 import com.ironhack.wickedbank.wickedbank.model.User;
 
