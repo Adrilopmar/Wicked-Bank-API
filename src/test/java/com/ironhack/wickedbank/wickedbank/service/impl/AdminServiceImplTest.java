@@ -12,6 +12,7 @@ import com.ironhack.wickedbank.wickedbank.controller.dto.creditcard.create.Credi
 import com.ironhack.wickedbank.wickedbank.controller.dto.savings.create.SavingsDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.thirdparty.create.ThirdPartyDto;
 import com.ironhack.wickedbank.wickedbank.enums.Type;
+import com.ironhack.wickedbank.wickedbank.model.Role;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.model.accountType.StudentChecking;
@@ -34,6 +35,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -88,6 +90,7 @@ class AdminServiceImplTest {
         accountHolder= new AccountHolder("Sir.Duck",localDate,address,"asd@asd.com");
 //        accountHolder= new AccountHolder("Sir.Duck",localDate,address,"asd@asd.com");
         accountHolderTeen= new AccountHolder("Elena",localDateTeen,address,"123@123.com");
+        accountHolderTeen.setRoles(List.of(new Role("ACCOUNT_HOLDER")));
         creditCardHolder= new AccountHolder("Rafa",localDateTest,address,"hhh@hhh.com");
         userRepository.save(accountHolder);
         userRepository.save(accountHolderTeen);
