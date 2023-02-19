@@ -1,5 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.model.userInfo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ironhack.wickedbank.wickedbank.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
@@ -7,6 +8,7 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 @Entity
 @PrimaryKeyJoinColumn(name = "userId")
 public class ThirdParty extends User {
+    @JsonIgnore
     private String hashedKey;
 
     public ThirdParty() {

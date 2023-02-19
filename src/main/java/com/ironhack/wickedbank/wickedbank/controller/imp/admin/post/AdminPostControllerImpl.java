@@ -7,17 +7,16 @@ import com.ironhack.wickedbank.wickedbank.controller.dto.creditcard.create.Credi
 import com.ironhack.wickedbank.wickedbank.controller.dto.savings.create.SavingsDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.thirdparty.create.ThirdPartyDto;
 import com.ironhack.wickedbank.wickedbank.controller.interfaces.admin.AdminControler;
+import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.AccountHolder;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.Admin;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.ThirdParty;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
-import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,8 +33,8 @@ public class AdminPostControllerImpl implements AdminControler {
     }
     @PostMapping("/checking")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createChecking(@RequestBody @Valid CheckingDto checkingDto){
-       adminService.createChecking(checkingDto);
+    public Account createChecking(@RequestBody @Valid CheckingDto checkingDto){
+        return  adminService.createChecking(checkingDto);
     }
 
     @PostMapping("/credit-card")

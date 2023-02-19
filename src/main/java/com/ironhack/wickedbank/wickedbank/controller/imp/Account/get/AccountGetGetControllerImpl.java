@@ -5,6 +5,7 @@ import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,6 @@ public class AccountGetGetControllerImpl implements AccountGetController {
     AccountService accountService;
 
     @GetMapping("/my-account/{accountId}")
-    public Account getUserAccountById(@PathVariable Long accountId){
-        return accountService.getAccountById(accountId);}
+    public Account getUserAccountById(@PathVariable Long accountId, Authentication authentication){
+        return accountService.getAccountById(accountId, authentication);}
 }

@@ -8,6 +8,7 @@ import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AccountService;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +32,8 @@ public class AdminGetControllerImpl implements AdminControllerGet {
     @GetMapping("/accounts/all")
     public List<Account> getAllAccounts(){return accountRepository.findAll();}
     @GetMapping("/accounts/{accountId}")
-    public Account getAccountById(@PathVariable Long accountId){
-        return accountService.getAccountById(accountId);}
+    public Account getAccountById(@PathVariable Long accountId, Authentication authentication){
+        return accountService.getAccountById(accountId, authentication);}
     // =================================== Users ==========================
     @GetMapping("/users/all")
     public List<User> getAllUsers() {
