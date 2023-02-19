@@ -25,7 +25,7 @@ public abstract class User {
     @JoinColumn(name="user_id")
     private List<Role> roles;
     @OneToMany(mappedBy = "senderId",cascade = CascadeType.ALL)
-//    @JsonIgnore
+    @JsonIgnore
     private List<Transaction> transactions;
 
     public User() {
@@ -79,5 +79,13 @@ public abstract class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Transaction transaction) {
+        this.transactions.add(transaction);
     }
 }

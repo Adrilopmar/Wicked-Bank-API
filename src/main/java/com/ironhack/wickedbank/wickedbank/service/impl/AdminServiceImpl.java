@@ -19,10 +19,7 @@ import com.ironhack.wickedbank.wickedbank.model.accountType.StudentChecking;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.AccountHolder;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.Admin;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.ThirdParty;
-import com.ironhack.wickedbank.wickedbank.repository.AccountHolderRepository;
-import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
-import com.ironhack.wickedbank.wickedbank.repository.AdminRepository;
-import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
+import com.ironhack.wickedbank.wickedbank.repository.*;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,6 +39,8 @@ public class AdminServiceImpl implements AdminService {
     AdminRepository adminRepository;
     @Autowired
     AccountHolderRepository accountHolderRepository;
+    @Autowired
+    ThirdPartyRepository thirdPartyRepository;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -90,61 +89,59 @@ public class AdminServiceImpl implements AdminService {
         return account;
     }
 
-    public void createChecking(CheckingDto dto) {
+    public Account createChecking(CheckingDto dto) {
         Checking account = new Checking(); // create new checking
         List<User> owners =new ArrayList(); // create list for owners
         List<Account> accountList = new ArrayList<>();
-
-        Optional<AccountHolder> optionalHolder = accountHolderRepository.findById(dto.getOwnerId());
+        Optional<User> optionalUser = userRepository.findById(dto.getOwnerId());
         if(checkUserInDatabase(dto.getOwnerId())){
-            owners.add(optionalHolder.get());
+            owners.add(optionalUser.get());
         }
-//        if (optionalHolder.isPresent()){ //check if user exist in db
-//        }else {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found");
-//        }
         if (dto.getSecondaryOwner() != null){
             Optional<User> optionalSecondOwner = userRepository.findById(dto.getSecondaryOwner());
-//            if (optionalSecondOwner.isPresent()){
-//                owners.add(optionalSecondOwner.get());
-//            }else {
-//                throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Secondary owner not found");
-//            }
             if(checkUserInDatabase(optionalSecondOwner.get().getUserId())){
                 owners.add(optionalSecondOwner.get());
             }
         }
-        if(account.getCreationDate().getYear()-optionalHolder.get().getDateOfBirth().getYear() <24){
-            System.out.println("creating student checking due to age");
-            StudentChecking studentChecking = new StudentChecking();
-            accountList.add(studentChecking);
-            optionalHolder.get().setAccounts(accountList);
-            if(dto.getBalance() != null){ //setting balance & checking minimum
-                studentChecking.setBalance(dto.getBalance());
-            }else {
-                studentChecking.setBalance(new Money(new BigDecimal("0.00")));
-            }
-            studentChecking.setType(Type.STUDENT_CHECKING);
-            studentChecking.setOwners(owners);
-            studentChecking.setOwnerId(dto.getOwnerId());
-            studentChecking.setSecretKey(dto.getSecretKey());
-            accountRepository.save(studentChecking);
-        }else {
+        if (optionalUser.get().getRoles().toString().contains("ACCOUNT")){
+            Optional<AccountHolder> optionalHolder = accountHolderRepository.findById(dto.getOwnerId());
+            if(account.getCreationDate().getYear()-optionalHolder.get().getDateOfBirth().getYear() <24){
+                System.out.println("creating student checking due to age");
+                StudentChecking studentChecking = new StudentChecking();
+                accountList.add(studentChecking);
+                optionalHolder.get().setAccounts(accountList);
+                if(dto.getBalance() != null){ //setting balance & checking minimum
+                    studentChecking.setBalance(dto.getBalance());
+                }else {
+                    studentChecking.setBalance(new Money(new BigDecimal("0.00")));
+                }
+                studentChecking.setType(Type.STUDENT_CHECKING);
+                studentChecking.setOwners(owners);
+                studentChecking.setOwnerId(dto.getOwnerId());
+                studentChecking.setSecretKey(dto.getSecretKey());
+                accountRepository.save(studentChecking);
+                return studentChecking;
+        } else {
             accountList.add(account);
             optionalHolder.get().setAccounts(accountList);
-            if(dto.getBalance() != null){ //setting balance & checking minimum
-                if (dto.getBalance().getAmount().compareTo(new BigDecimal("250"))<0) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Balance can not be less than 250");
-                }else {
-                    account.setBalance(dto.getBalance());
-                }
             }
-            account.setType(Type.CHECKING);
+        } else if (optionalUser.get().getRoles().toString().contains("THIRD")) {
+            Optional<ThirdParty> optionalThirdParty = thirdPartyRepository.findById(dto.getOwnerId());
+            optionalThirdParty.get().setAccounts(accountList);
+        }
+        if (dto.getBalance() != null) { //setting balance & checking minimum
+            if (dto.getBalance().getAmount().compareTo(new BigDecimal("250")) < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Balance can not be less than 250");
+            } else {
+                account.setBalance(dto.getBalance());
+            }
+        account.setType(Type.CHECKING);
             account.setOwners(owners);
             account.setOwnerId(dto.getOwnerId());
             account.setSecretKey(dto.getSecretKey());
             accountRepository.save(account);
-        }
+            return account;
+        }else return null;
     }
     public CreditCard createCreditCard(CreditCardDto dto) {
         CreditCard account = new CreditCard(); // create new credit card

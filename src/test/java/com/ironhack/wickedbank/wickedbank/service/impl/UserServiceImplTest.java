@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ironhack.wickedbank.wickedbank.classes.Address;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.controller.dto.transaction.transactionDto;
+import com.ironhack.wickedbank.wickedbank.model.accountType.Checking;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.model.accountType.StudentChecking;
@@ -30,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,6 +56,7 @@ class UserServiceImplTest {
     private StudentChecking studentChecking;
     private CreditCard creditCard;
     private Savings savings;
+    private Checking checking;
     private AccountHolder accountHolderTeen;
     private AccountHolder creditCardHolder;
     @BeforeEach
@@ -78,6 +81,8 @@ class UserServiceImplTest {
 //        accountHolder= new AccountHolder("Sir.Duck",localDate,address,"asd@asd.com");
         accountHolderTeen= new AccountHolder("Elena",localDateTeen,address,"123@123.com");
         creditCardHolder= new AccountHolder("Rafa",localDateTest,address,"hhh@hhh.com");
+        thirdParty = new ThirdParty("Noumu","123");
+        userRepository.save(thirdParty);
         userRepository.save(accountHolder);
         userRepository.save(accountHolderTeen);
         userRepository.save(creditCardHolder);
@@ -93,16 +98,21 @@ class UserServiceImplTest {
         savings = new Savings();
         savings.setOwnerId(accountHolder.getUserId());
         savings.setBalance(new Money(new BigDecimal("600")));
-
+        checking = new Checking();
+        checking.setOwnerId(thirdParty.getUserId());
+        checking.setBalance(new Money(new BigDecimal("3500")));
+        checking.setOwners(List.of(thirdParty));
         accountRepository.save(creditCard);
         accountRepository.save(studentChecking);
         accountRepository.save(savings);
+        accountRepository.save(checking);
+
     }
 
     @AfterEach
     void tearDown() {
-//        userRepository.deleteAll();
-//        accountRepository.deleteAll();
+        userRepository.deleteAll();
+        accountRepository.deleteAll();
     }
 
     @Test
@@ -117,13 +127,14 @@ class UserServiceImplTest {
     void newTransaction_CorrectData_SuccessfulTransaction() throws Exception {
         transactionDto dto = new transactionDto();
         dto.setSenderAccountId(creditCard.getAccountId());
-        dto.setReceiverAccountId(studentChecking.getAccountId());
+//        dto.setReceiverAccountId(studentChecking.getAccountId());
         dto.setAmount(new Money(new BigDecimal("100")));
         String body = objectMapper.writeValueAsString(dto);
         MvcResult mvcResult = mockMvc.perform(
-                        post("/users/"+creditCardHolder.getUserId()+"/transaction/"+accountHolderTeen.getUserId())
-                                .param("senderId", String.valueOf(creditCardHolder.getUserId()))
-                                .param("receiverId", String.valueOf(accountHolderTeen.getUserId()))
+                        post("/users/"+creditCardHolder.getUserId()+"/transaction/"+studentChecking.getAccountId())
+//                                .param("senderAccountId", String.valueOf(creditCardHolder.getUserId()))
+//                                .param("receiverId", String.valueOf(accountHolderTeen.getUserId()))
+                                .param("primary-owner", creditCardHolder.getName())
                                 .content(body)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -136,19 +147,37 @@ class UserServiceImplTest {
     void newTransaction_SameAccountData_Declined() throws Exception {
         transactionDto dto = new transactionDto();
         dto.setSenderAccountId(7L);
-        dto.setReceiverAccountId(7L);
+//        dto.setReceiverAccountId(7L);
         dto.setAmount(new Money(new BigDecimal("100")));
         String body = objectMapper.writeValueAsString(dto);
         MvcResult mvcResult = mockMvc.perform(
                         post("/users/7/transaction/7")
-                                .param("senderId","7")
-                                .param("receiverId","7")
+//                                .param("senderId","7")
+//                                .param("receiverId","7")
+                                .param("primary-owner", "titi")
                                 .content(body)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isMethodNotAllowed())
                 .andReturn();
-        assertThrows(ResponseStatusException.class,()->userService.newTransaction(7L,7L,dto));
+        assertThrows(ResponseStatusException.class,()->userService.newTransaction(7L,7L,"titi",null,dto));
 
+    }
+    @Test
+    void thirdPartyTransaction() throws Exception {
+        ///third-party/{senderId}/transaction/{receiverId}
+        transactionDto dto = new transactionDto();
+        dto.setSenderAccountId(checking.getAccountId());
+        dto.setAmount(new Money(new BigDecimal("200")));
+        String body = objectMapper.writeValueAsString(dto);
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/users/third-party/"+thirdParty.getUserId()+"/transaction/"+studentChecking.getAccountId())
+                                .header("hashed-key","123")
+                                .param("secret-key", "123")
+                                .content(body)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isAccepted())
+                .andReturn();
     }
 }

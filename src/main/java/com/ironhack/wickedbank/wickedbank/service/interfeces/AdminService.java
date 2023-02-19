@@ -7,6 +7,7 @@ import com.ironhack.wickedbank.wickedbank.controller.dto.checking.create.Checkin
 import com.ironhack.wickedbank.wickedbank.controller.dto.creditcard.create.CreditCardDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.savings.create.SavingsDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.thirdparty.create.ThirdPartyDto;
+import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.AccountHolder;
@@ -15,7 +16,7 @@ import com.ironhack.wickedbank.wickedbank.model.userInfo.ThirdParty;
 
 public interface AdminService {
     Savings createSaving(SavingsDto savingsDto);//String username
-    void createChecking(CheckingDto checkingDto);
+    Account createChecking(CheckingDto checkingDto);
     CreditCard createCreditCard(CreditCardDto creditCardDto);
     Admin createAdmin(AdminDto adminDto);
     AccountHolder createAccountHolder(AccountHolderDto accountHolderDto);
