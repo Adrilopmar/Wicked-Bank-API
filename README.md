@@ -121,4 +121,4 @@ This diagram shows the tables in the database and the relationships between them
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+All right reserved to me =)
