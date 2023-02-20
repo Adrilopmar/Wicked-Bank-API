@@ -23,6 +23,8 @@ import com.ironhack.wickedbank.wickedbank.repository.*;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -42,12 +44,18 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     ThirdPartyRepository thirdPartyRepository;
     @Autowired
+    CheckingRepository checkingRepository;
+    @Autowired
+    CreditCardRepository creditCardRepository;
+    @Autowired
+    SavingRepository savingRepository;
+    @Autowired
     UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public Savings createSaving(SavingsDto dto) {
-//        Optional<User> ac = userRepository.findByName(username);
+    public Savings createSaving(SavingsDto dto, Authentication authentication) {
+        authentication(authentication);
         Savings account= new Savings(); // create new saving account
         List<User> owners =new ArrayList<>(); // create list for owners
         List<Account> accountList = new ArrayList<>();
@@ -83,13 +91,12 @@ public class AdminServiceImpl implements AdminService {
         account.setOwners(owners);
         account.setOwnerId(dto.getOwnerId());
         account.setSecretKey(dto.getSecretKey()); // encrypt needed
-//        accountList.add(account);
-//        optionalUser.get().setAccounts(accountList);
-        accountRepository.save(account);
+        savingRepository.save(account);
         return account;
     }
 
-    public Account createChecking(CheckingDto dto) {
+    public Account createChecking(CheckingDto dto,Authentication authentication) {
+        authentication(authentication);
         Checking account = new Checking(); // create new checking
         List<User> owners =new ArrayList(); // create list for owners
         List<Account> accountList = new ArrayList<>();
@@ -135,15 +142,16 @@ public class AdminServiceImpl implements AdminService {
             } else {
                 account.setBalance(dto.getBalance());
             }
-        account.setType(Type.CHECKING);
+            account.setType(Type.CHECKING);
             account.setOwners(owners);
             account.setOwnerId(dto.getOwnerId());
             account.setSecretKey(dto.getSecretKey());
-            accountRepository.save(account);
+            checkingRepository.save(account);
             return account;
         }else return null;
     }
-    public CreditCard createCreditCard(CreditCardDto dto) {
+    public CreditCard createCreditCard(CreditCardDto dto,Authentication authentication) {
+        authentication(authentication);
         CreditCard account = new CreditCard(); // create new credit card
         List<User> owners =new ArrayList(); // create list for owners
         List<Account> accountList = new ArrayList<>();
@@ -177,26 +185,28 @@ public class AdminServiceImpl implements AdminService {
         account.setOwners(owners);
         account.setOwnerId(dto.getOwnerId());
         account.setSecretKey(dto.getSecretKey());
-        accountRepository.save(account);
+        creditCardRepository.save(account);
         return account;
     }
-    public Admin createAdmin(AdminDto dto) {
-        Admin admin = new Admin();
+    public Admin createAdmin(AdminDto dto,Authentication authentication) {
+//        authentication(authentication);
         Role adminRole = new Role("ADMIN");
-        admin.setRoles(List.of(adminRole));
-        admin.setName(dto.getName());
-        admin.setUsername(dto.getUsername());
-        admin.setPassword(passwordEncoder.encode(dto.getPassword()));
+        Admin admin = new Admin(
+                dto.getName(),
+                dto.getUsername(),
+                passwordEncoder.encode(dto.getPassword()),
+                List.of(adminRole));
         userRepository.save(admin);
         return admin;
     }
-    public AccountHolder createAccountHolder(AccountHolderDto dto) {
-        AccountHolder accountHolder = new AccountHolder();
-        accountHolder.setName(dto.getName());
-        accountHolder.setPassword(passwordEncoder.encode(dto.getPassword()));
-        accountHolder.setUsername(dto.getUsername());
+    public AccountHolder createAccountHolder(AccountHolderDto dto,Authentication authentication) {
+        authentication(authentication);
         Role role = new Role("ACCOUNT_HOLDER");
-        accountHolder.setRoles(List.of(role));
+        AccountHolder accountHolder = new AccountHolder(
+                dto.getName(),
+                passwordEncoder.encode(dto.getPassword()),
+                dto.getUsername(),
+                List.of(role));
         if (dto.getAddress()!= null){
             accountHolder.setAddress(dto.getAddress());
         }
@@ -210,18 +220,20 @@ public class AdminServiceImpl implements AdminService {
         return accountHolder;
     }
 
-    public ThirdParty createThirdParty(ThirdPartyDto dto) {
-       ThirdParty thirdParty = new ThirdParty();
+    public ThirdParty createThirdParty(ThirdPartyDto dto,Authentication authentication) {
+        authentication(authentication);
         Role role = new Role("THIRD_PARTY");
-        thirdParty.setRoles(List.of(role));
-        thirdParty.setHashedKey(dto.getHashedKey());
-        thirdParty.setPassword(passwordEncoder.encode(dto.getPassword()));
-        thirdParty.setName(dto.getName());
+       ThirdParty thirdParty = new ThirdParty(dto.getName(),
+               dto.getUsername(),
+               passwordEncoder.encode(dto.getPassword()),
+               List.of(role),
+               dto.getHashedKey());
        userRepository.save(thirdParty);
        return thirdParty;
     }
 
-    public void deleteUser(Long userId, DeleteDto dto) {
+    public void deleteUser(Long userId, DeleteDto dto,Authentication authentication) {
+        authentication(authentication);
         Optional<Admin> optionalAdmin = Optional.ofNullable(adminRepository.findByName(dto.getName()));
         if (optionalAdmin.isPresent()){
             if(optionalAdmin.get().getPassword().equals(dto.getPassword())){
@@ -235,7 +247,8 @@ public class AdminServiceImpl implements AdminService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid credentials");
         }
     }
-    public void deleteAccount(Long accountId, DeleteDto dto) {
+    public void deleteAccount(Long accountId, DeleteDto dto,Authentication authentication) {
+        authentication(authentication);
         Optional<Admin> optionalAdmin = Optional.ofNullable(adminRepository.findByName(dto.getName()));
         if (optionalAdmin.isPresent()){
             if(optionalAdmin.get().getPassword().equals(dto.getPassword())){
@@ -263,6 +276,12 @@ public class AdminServiceImpl implements AdminService {
             return true;
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Account not found");
+        }
+    }
+    public void authentication(Authentication authentication){
+        if(authentication == null ||
+                !SecurityContextHolder.getContext().getAuthentication().getName().equals(authentication.getName())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
         }
     }
 }

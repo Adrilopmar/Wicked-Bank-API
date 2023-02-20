@@ -12,6 +12,15 @@ public abstract class User {
     @NotNull
     private String username;
 
+    public User() {
+    }
+
+    public User(String name, String password, String username) {
+        this.name = name;
+        this.password = password;
+        this.username = username;
+    }
+
     public String getName() {
         return name;
     }

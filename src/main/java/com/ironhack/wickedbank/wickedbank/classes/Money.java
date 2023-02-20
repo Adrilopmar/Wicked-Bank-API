@@ -20,6 +20,7 @@ public class Money {
     }
     public Money(String balance){
         setAmount(new BigDecimal(balance));
+        this.currency = Currency.getInstance("USD");
     }
 
     /**

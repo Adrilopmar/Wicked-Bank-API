@@ -19,6 +19,7 @@ public class CreditCard extends Account {
     })
         private Money creditLimit = new Money( new BigDecimal("100"));
         private BigDecimal interestRate =new BigDecimal("0.2");
+        private LocalDate lastInterestUpdate = super.getCreationDate();
 
     public CreditCard() {
     }
@@ -37,6 +38,14 @@ public class CreditCard extends Account {
         setInterestRate(interestRate);
     }
 
+    public void updateInterest() {
+        LocalDate currentDate = LocalDate.now();
+        while ((lastInterestUpdate.isBefore(currentDate.minusMonths(1)))) {
+            BigDecimal interest = getBalance().getAmount().multiply(getInterestRate());
+            getBalance().increaseAmount(interest);
+            lastInterestUpdate = lastInterestUpdate.plusYears(1);
+        }
+    }
     public Money getCreditLimit() {
         return creditLimit;
     }
@@ -49,6 +58,14 @@ public class CreditCard extends Account {
         }else {
             this.creditLimit = creditLimit;
         }
+    }
+
+    public LocalDate getLastInterestUpdate() {
+        return lastInterestUpdate;
+    }
+
+    public void setLastInterestUpdate(LocalDate lastInterestUpdate) {
+        this.lastInterestUpdate = lastInterestUpdate;
     }
 
     public BigDecimal getInterestRate() {

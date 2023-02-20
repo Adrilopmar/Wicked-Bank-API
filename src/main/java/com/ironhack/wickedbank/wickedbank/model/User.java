@@ -14,6 +14,7 @@ public abstract class User {
     private Long userId;
 
     private String name;
+    @Column(unique = true)
     private String username;
     @JsonIgnore
     private String password;
@@ -29,6 +30,13 @@ public abstract class User {
     private List<Transaction> transactions;
 
     public User() {
+    }
+
+    public User(String name, String username, String password, List<Role> roles) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
     }
 
     public User(String name) {

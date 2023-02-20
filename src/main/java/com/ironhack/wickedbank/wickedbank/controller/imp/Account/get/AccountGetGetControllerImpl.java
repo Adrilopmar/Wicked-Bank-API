@@ -1,5 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.controller.imp.Account.get;
 
+import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.controller.interfaces.account.AccountGetController;
 import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
@@ -24,4 +25,7 @@ public class AccountGetGetControllerImpl implements AccountGetController {
     @GetMapping("/my-account/{accountId}")
     public Account getUserAccountById(@PathVariable Long accountId, Authentication authentication){
         return accountService.getAccountById(accountId, authentication);}
+    @GetMapping("/my-account/{accountId}/balance")
+    public Money getUserAccountBalanceById(@PathVariable Long accountId, Authentication authentication){
+        return accountService.getUserAccountBalanceById(accountId, authentication);}
 }

@@ -1,8 +1,14 @@
 package com.ironhack.wickedbank.wickedbank.service.impl;
 
+import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.model.Account;
+import com.ironhack.wickedbank.wickedbank.model.accountType.Checking;
+import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
+import com.ironhack.wickedbank.wickedbank.repository.CheckingRepository;
+import com.ironhack.wickedbank.wickedbank.repository.SavingRepository;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AccountService;
+import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -16,18 +22,22 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    SavingRepository savingRepository;
+    @Autowired
+    AdminService adminService;
 
     public Account getAccountById(Long id, Authentication authentication) {
-        if(authentication == null ||
-                !SecurityContextHolder.getContext().getAuthentication().getName().equals(authentication.getName())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Access denied");
-        }
+        adminService.authentication(authentication);
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if (!optionalAccount.isPresent()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Account not found");
         }else{
             return optionalAccount.get();
         }
+    }
+    public Money getUserAccountBalanceById(Long accountId, Authentication authentication){
+        return getAccountById(accountId,authentication).getBalance();
     }
 
 }

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "accountId")
 public class Checking extends Account {
 
-//    private Money minimumBalance = new Money(new BigDecimal("250"));
+    private Money minimumBalance = new Money(new BigDecimal("250"));
 @Embedded
 @AttributeOverrides({
         @AttributeOverride(name = "amount", column = @Column(name = "monthly_maintenance")),
@@ -32,27 +32,27 @@ public class Checking extends Account {
 
     public Checking(Money balance, String secretKey, Long ownerId, Money monthlyMaintenanceFee) {
         super(balance, secretKey, ownerId);
-//        setMinimumBalance(minimumBalance);
+        setMinimumBalance(minimumBalance);
         setMonthlyMaintenanceFee(monthlyMaintenanceFee);
     }
 //
     public Checking(Money balance, String secretKey, Long ownerId, Long secondaryOwner, Money monthlyMaintenanceFee) {
         super(balance, secretKey, ownerId, secondaryOwner);
-//        setMinimumBalance(minimumBalance);
+        setMinimumBalance(minimumBalance);
         setMonthlyMaintenanceFee(monthlyMaintenanceFee);
     }
 
-//    public Money getMinimumBalance() {
-//        return minimumBalance;
-//    }
+    public Money getMinimumBalance() {
+        return minimumBalance;
+    }
 
-//    public void setMinimumBalance(Money minimumBalance) {
-//        if(minimumBalance.getAmount().compareTo(new BigDecimal("250"))<0){
-//            this.minimumBalance = new Money(new BigDecimal("250"));
-//        }else {
-//            this.minimumBalance = minimumBalance;
-//        }
-//    }
+    public void setMinimumBalance(Money minimumBalance) {
+        if(minimumBalance.getAmount().compareTo(new BigDecimal("250"))<0){
+            this.minimumBalance = new Money(new BigDecimal("250"));
+        }else {
+            this.minimumBalance = minimumBalance;
+        }
+    }
 
     public Money getMonthlyMaintenanceFee() {
         return monthlyMaintenanceFee;
