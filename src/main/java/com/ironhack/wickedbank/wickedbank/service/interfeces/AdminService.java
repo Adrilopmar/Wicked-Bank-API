@@ -13,14 +13,16 @@ import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.AccountHolder;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.Admin;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.ThirdParty;
+import org.springframework.security.core.Authentication;
 
 public interface AdminService {
-    Savings createSaving(SavingsDto savingsDto);//String username
-    Account createChecking(CheckingDto checkingDto);
-    CreditCard createCreditCard(CreditCardDto creditCardDto);
-    Admin createAdmin(AdminDto adminDto);
-    AccountHolder createAccountHolder(AccountHolderDto accountHolderDto);
-    ThirdParty createThirdParty(ThirdPartyDto thirdPartyDto);
-    void deleteUser(Long userId, DeleteDto deleteDto);
-    void deleteAccount(Long accountId, DeleteDto deleteDto);
+    Savings createSaving(SavingsDto savingsDto, Authentication authentication);//String username
+    Account createChecking(CheckingDto checkingDto,Authentication authentication);
+    CreditCard createCreditCard(CreditCardDto creditCardDto,Authentication authentication);
+    Admin createAdmin(AdminDto adminDto,Authentication authentication);
+    AccountHolder createAccountHolder(AccountHolderDto accountHolderDto,Authentication authentication);
+    ThirdParty createThirdParty(ThirdPartyDto thirdPartyDto,Authentication authentication);
+    void deleteUser(Long userId, DeleteDto deleteDto,Authentication authentication);
+    void deleteAccount(Long accountId, DeleteDto deleteDto,Authentication authentication);
+    void authentication(Authentication authentication);
 }

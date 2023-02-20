@@ -17,6 +17,7 @@ import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,35 +29,35 @@ public class AdminPostControllerImpl implements AdminControler {
     // ========================= Accounts =============================
     @PostMapping("/saving")
     @ResponseStatus(HttpStatus.CREATED)
-    public Savings createSaving(@RequestBody @Valid SavingsDto savingsDto){//, Authentication authentication
-       return adminService.createSaving(savingsDto);//, authentication.getName()
+    public Savings createSaving(@RequestBody @Valid SavingsDto savingsDto, Authentication authentication){//, Authentication authentication
+       return adminService.createSaving(savingsDto,authentication);//, authentication.getName()
     }
     @PostMapping("/checking")
     @ResponseStatus(HttpStatus.CREATED)
-    public Account createChecking(@RequestBody @Valid CheckingDto checkingDto){
-        return  adminService.createChecking(checkingDto);
+    public Account createChecking(@RequestBody @Valid CheckingDto checkingDto,Authentication authentication){
+        return  adminService.createChecking(checkingDto,authentication);
     }
 
     @PostMapping("/credit-card")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreditCard createCreditCard(@RequestBody @Valid CreditCardDto creditCardDto) {
-        return adminService.createCreditCard(creditCardDto);
+    public CreditCard createCreditCard(@RequestBody @Valid CreditCardDto creditCardDto,Authentication authentication) {
+        return adminService.createCreditCard(creditCardDto,authentication);
     }
 
     // ========================= Users =============================
     @PostMapping("/admin")
     @ResponseStatus(HttpStatus.CREATED)
-    public Admin AddAdmin(@RequestBody @Valid AdminDto adminDto) {
-        return adminService.createAdmin(adminDto);
+    public Admin AddAdmin(@RequestBody @Valid AdminDto adminDto,Authentication authentication) {
+        return adminService.createAdmin(adminDto,authentication);
     }
     @PostMapping("/account-holder")
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountHolder addAccountHolder(@RequestBody @Valid AccountHolderDto accountHolderDto) {
-        return adminService.createAccountHolder(accountHolderDto);
+    public AccountHolder addAccountHolder(@RequestBody @Valid AccountHolderDto accountHolderDto,Authentication authentication) {
+        return adminService.createAccountHolder(accountHolderDto,authentication);
     }
     @PostMapping("/third-party")
     @ResponseStatus(HttpStatus.CREATED)
-    public ThirdParty addThirdParty(@RequestBody @Valid ThirdPartyDto thirdPartyDto) {
-        return adminService.createThirdParty(thirdPartyDto);
+    public ThirdParty addThirdParty(@RequestBody @Valid ThirdPartyDto thirdPartyDto,Authentication authentication) {
+        return adminService.createThirdParty(thirdPartyDto,authentication);
     }
 }

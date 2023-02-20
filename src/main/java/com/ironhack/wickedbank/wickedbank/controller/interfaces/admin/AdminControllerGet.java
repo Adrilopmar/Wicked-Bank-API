@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface AdminControllerGet {
     Account getAccountById(Long accountId, Authentication authentication);
-     List<Account> getAllAccounts();
+     List<Account> getAllAccounts(Authentication authentication);
 }

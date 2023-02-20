@@ -3,6 +3,7 @@ package com.ironhack.wickedbank.wickedbank.service.impl;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.controller.dto.accountholder.update.AccountHolderPutDto;
 import com.ironhack.wickedbank.wickedbank.controller.dto.transaction.transactionDto;
+import com.ironhack.wickedbank.wickedbank.enums.Type;
 import com.ironhack.wickedbank.wickedbank.model.Account;
 import com.ironhack.wickedbank.wickedbank.model.Transaction;
 import com.ironhack.wickedbank.wickedbank.model.User;
@@ -12,13 +13,18 @@ import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
 import com.ironhack.wickedbank.wickedbank.repository.ThirdPartyRepository;
 import com.ironhack.wickedbank.wickedbank.repository.TransactionRepository;
 import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
+import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 @Service
 
@@ -31,8 +37,11 @@ public class UserServiceImpl implements UserService {
     ThirdPartyRepository thirdPartyRepository;
     @Autowired
     TransactionRepository transactionRepository;
+    @Autowired
+    AdminService adminService;
 
-    public User findUserById(Long id) {
+    public User findUserById(Long id,Authentication authentication) {
+        adminService.authentication(authentication);
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()){
             return optionalUser.get();
@@ -50,10 +59,13 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-    public Transaction newTransaction(Long senderId, Long receiverAccountId,String primaryOwner, String secondaryOwner, transactionDto dto) {
-        // check for authentication if users is allowed to do the move with the account
-        // is sender id and user logged id the same?
-        // do this logged user owns the dto account sender id?
+    public Transaction newTransaction(Long senderId,
+                                      Long receiverAccountId,
+                                      String primaryOwner,
+                                      String secondaryOwner,
+                                      transactionDto dto,
+                                      Authentication authentication) {
+        adminService.authentication(authentication);
         if(senderId.equals(receiverAccountId)){
             throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED,"It is not allowed to send " +
                     "money from one account to the same account.");
@@ -66,10 +78,13 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
-    public Transaction thirdPartyTransaction(Long senderId, Long receiverId,String secretKey ,transactionDto dto, HttpServletRequest header){
-        // check for authentication if users is allowed to do the move with the account
-        // is sender id and user logged id the same?
-        // do this logged user owns the dto account sender id?
+    public Transaction thirdPartyTransaction(Long senderId,
+                                             Long receiverId,
+                                             String secretKey ,
+                                             transactionDto dto,
+                                             HttpServletRequest header,
+                                             Authentication authentication){
+        adminService.authentication(authentication);
         Optional<ThirdParty> optionalUser = thirdPartyRepository.findById(senderId);
         Optional<Account> optionalSenderAccount = accountRepository.findById(dto.getSenderAccountId());
         Optional<Account> optionalReceiverAccount = accountRepository.findById(receiverId);
@@ -102,12 +117,20 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Receiver Account not found");
         }else if(transferAmount.getAmount().compareTo(sender.get().getBalance().getAmount())>0){
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Insufficient founds");
-        }else {return true;}
+        } else if (transferAmount.getAmount().compareTo(new BigDecimal("0"))<=0) {
+            sender.get().getBalance().decreaseAmount(sender.get().getBalance().getAmount().divide(BigDecimal.valueOf(2), RoundingMode.HALF_EVEN));
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT,"Bobo o que? You can't do this kind of transaction moron. You have been penalized with 50% of transaction amount");
+        } else {return true;}
     }
     public Transaction acceptedTransaction(User senderUser,Account sender,Account receiver, transactionDto dto){
+        boolean before = isRedNumbers(sender.getBalance(),sender.getType());
         sender.setBalance( new Money(
                 sender.getBalance().decreaseAmount(dto.getAmount())
         ));
+        boolean after = isRedNumbers(sender.getBalance(),sender.getType());
+        if (!before && after){
+            sender.getBalance().decreaseAmount(new BigDecimal("40"));
+        }
         accountRepository.save(sender);
         receiver.setBalance(new Money(
                 receiver.getBalance().increaseAmount(dto.getAmount())
@@ -123,4 +146,18 @@ public class UserServiceImpl implements UserService {
         transactionRepository.save(transaction);
         return transaction;
     }
+    public  boolean isRedNumbers(Money senderBalance, Type accountType){
+        boolean redNumbers =false;
+        switch (accountType) {
+            case CHECKING -> {
+                if (senderBalance.getAmount().compareTo(new BigDecimal("250.00")) < 0) redNumbers = true;
+            }
+            case SAVINGS -> {
+                if (senderBalance.getAmount().compareTo(new BigDecimal("1000.00")) < 0) redNumbers = true;
+            }
+            default -> {}
+        }
+        return  redNumbers;
+    }
+
 }

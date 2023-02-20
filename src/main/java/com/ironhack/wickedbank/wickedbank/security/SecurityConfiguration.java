@@ -50,9 +50,14 @@ public class SecurityConfiguration {
 
         // set up authorization for different request matchers and user roles
         http.authorizeHttpRequests() // GET /hello/user
-//                .requestMatchers(HttpMethod.GET, "/accounts").authenticated() // any role
-//                .requestMatchers(HttpMethod.GET, "/hello/admin").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.GET, "/hello/user").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/accounts/*").authenticated() // any role
+                .requestMatchers(HttpMethod.PUT, "/accounts/*").hasAnyRole("ADMIN","ACCOUNT_HOLDER")
+                .requestMatchers(HttpMethod.POST, "/users/*").hasAnyRole("ACCOUNT_HOLDER", "ADMIN","THIRD_PARTY")
+                .requestMatchers(HttpMethod.GET, "/admin/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/admin/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/admin/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/admin/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/admin/*").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.GET, "/curses/*/department").hasRole("ADMIN")
                 .anyRequest().permitAll(); // Any other route will be public
 

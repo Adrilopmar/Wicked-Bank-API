@@ -10,27 +10,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserControllerImpl implements UserControler {
-
-    @Autowired
-    UserRepository userRepository;
     @Autowired
     UserService userService;
-    @Autowired
-    ThirdPartyRepository thirdPartyRepository;
-
     @PostMapping("/{senderId}/transaction/{receiverId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Transaction newTransaction(@PathVariable (name = "senderId") Long senderId,
                                       @PathVariable (name = "receiverId") Long receiverId,
                                       @RequestParam (name = "primary-owner") String primaryOwner,
                                       @RequestParam (name = "secondary-owner", required = false)String secondaryOwner,
-                                      @RequestBody @Valid transactionDto transactionDto){
-        return userService.newTransaction(senderId,receiverId,primaryOwner,secondaryOwner,transactionDto);
+                                      @RequestBody @Valid transactionDto transactionDto,
+                                      Authentication authentication){
+        return userService.newTransaction(senderId,receiverId,primaryOwner,secondaryOwner,transactionDto,authentication);
     }
     @PostMapping("/third-party/{senderId}/transaction/{receiverAccountId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -39,13 +35,9 @@ public class UserControllerImpl implements UserControler {
             @PathVariable (name = "receiverAccountId") Long receiverAccountId,
             @RequestParam (name = "secret-key") String secretKey,
             @RequestBody @Valid transactionDto transactionDto,
-            HttpServletRequest headers
+            HttpServletRequest headers,
+            Authentication authentication
             ){
-        return userService.thirdPartyTransaction(senderId,receiverAccountId,secretKey,transactionDto,headers);
+        return userService.thirdPartyTransaction(senderId,receiverAccountId,secretKey,transactionDto,headers,authentication);
     }
-
-//    @GetMapping("/role/admin")
-//    public List<User> getAllByRole(){
-//        return userRepository.findAllByRoles("ADMIN");
-//    }
 }

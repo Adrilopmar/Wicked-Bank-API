@@ -6,6 +6,7 @@ import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,13 +17,13 @@ public class AdminControllerDeleteImpl implements AdminControlerDelete {
 
     @DeleteMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteUser(@RequestParam Long userId, @RequestBody @Valid DeleteDto deleteDto){
-        adminService.deleteUser(userId, deleteDto);
+    public void deleteUser(@RequestParam Long userId, @RequestBody @Valid DeleteDto deleteDto,Authentication authentication){
+        adminService.deleteUser(userId, deleteDto,authentication);
     }
     @DeleteMapping("/account/{accountId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteAccount(@RequestParam Long accountId, @RequestBody @Valid DeleteDto deleteDto){
-        adminService.deleteAccount(accountId,deleteDto);
+    public void deleteAccount(@RequestParam Long accountId, @RequestBody @Valid DeleteDto deleteDto, Authentication authentication){
+        adminService.deleteAccount(accountId,deleteDto,authentication);
     }
 
 }
