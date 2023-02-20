@@ -2,6 +2,8 @@
 
 Wicked-Bank-API is a modern, secure, and easy-to-use RESTful API for a fictional bank that provides various endpoints for managing accounts, transactions, and user profiles. This API has been designed to enable developers to quickly build financial applications that require a reliable and secure backend system.
 
+Built on top of Spring Boot, a popular and well-supported Java framework, Wicked-Bank-API provides a robust and scalable solution for building financial applications. The API implements Spring Security for user authentication and authorization, and Spring Data JPA for efficient and easy data access.
+Wicked-Bank-API includes several key features such as user authentication and authorization using JWT (JSON Web Tokens), the ability to create, retrieve, update, and delete accounts, deposit and withdraw funds from accounts, transfer funds between accounts, view transaction history for accounts, and create and manage user profiles.
 ## Features
 
 - User authentication and authorization using JWT (JSON Web Tokens)
@@ -118,6 +120,9 @@ Here's a diagram of the database schema used in the Wicked-Bank-API project:
 ![Wicked-Bank-API Database Diagram](https://res.cloudinary.com/djqzi4hgo/image/upload/v1676882389/Wicked-Bank/wicked_bank_diagram_yfxku6.png)
 
 This diagram shows the tables in the database and the relationships between them. Use it as a reference when working with the database.
+## Backlog
+
+There are a lot of things to work on... not gonna list them...
 
 ## License
 
