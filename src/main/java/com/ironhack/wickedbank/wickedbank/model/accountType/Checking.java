@@ -2,7 +2,6 @@ package com.ironhack.wickedbank.wickedbank.model.accountType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
-import com.ironhack.wickedbank.wickedbank.enums.Status;
 import com.ironhack.wickedbank.wickedbank.model.Account;
 import jakarta.persistence.*;
 

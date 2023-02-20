@@ -3,8 +3,6 @@ package com.ironhack.wickedbank.wickedbank.controller.imp.user.post;
 import com.ironhack.wickedbank.wickedbank.controller.dto.transaction.transactionDto;
 import com.ironhack.wickedbank.wickedbank.controller.interfaces.user.UserControler;
 import com.ironhack.wickedbank.wickedbank.model.Transaction;
-import com.ironhack.wickedbank.wickedbank.repository.ThirdPartyRepository;
-import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

@@ -3,7 +3,6 @@ package com.ironhack.wickedbank.wickedbank.controller.imp.Account.put;
 import com.ironhack.wickedbank.wickedbank.controller.dto.accountholder.update.AccountHolderPutDto;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.AccountHolder;
 import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
-import com.ironhack.wickedbank.wickedbank.service.interfeces.AccountService;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

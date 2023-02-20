@@ -1,7 +1,8 @@
 package com.ironhack.wickedbank.wickedbank.controller.dto.savings.create;
 
 import com.ironhack.wickedbank.wickedbank.classes.Money;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 

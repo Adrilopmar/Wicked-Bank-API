@@ -1,11 +1,10 @@
 package com.ironhack.wickedbank.wickedbank.classes;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
-import java.math.RoundingMode;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Currency;
 @Embeddable
 public class Money {

@@ -1,9 +1,6 @@
 package com.ironhack.wickedbank.wickedbank.classes;
 
-import com.ironhack.wickedbank.wickedbank.model.User;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 
 @Embeddable
 public class Address {

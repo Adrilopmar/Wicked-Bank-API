@@ -2,17 +2,13 @@ package com.ironhack.wickedbank.wickedbank.service.impl;
 
 import com.ironhack.wickedbank.wickedbank.classes.Money;
 import com.ironhack.wickedbank.wickedbank.model.Account;
-import com.ironhack.wickedbank.wickedbank.model.accountType.Checking;
-import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
-import com.ironhack.wickedbank.wickedbank.repository.CheckingRepository;
 import com.ironhack.wickedbank.wickedbank.repository.SavingRepository;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AccountService;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 

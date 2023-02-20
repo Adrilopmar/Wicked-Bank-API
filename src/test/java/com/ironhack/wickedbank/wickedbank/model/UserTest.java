@@ -2,7 +2,6 @@ package com.ironhack.wickedbank.wickedbank.model;
 
 import com.ironhack.wickedbank.wickedbank.classes.Address;
 import com.ironhack.wickedbank.wickedbank.classes.Money;
-import com.ironhack.wickedbank.wickedbank.enums.Status;
 import com.ironhack.wickedbank.wickedbank.model.accountType.CreditCard;
 import com.ironhack.wickedbank.wickedbank.model.accountType.Savings;
 import com.ironhack.wickedbank.wickedbank.model.accountType.StudentChecking;
@@ -20,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class UserTest {

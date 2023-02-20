@@ -1,6 +1,5 @@
 package com.ironhack.wickedbank.wickedbank.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ironhack.wickedbank.wickedbank.classes.Address;
@@ -15,7 +14,6 @@ import com.ironhack.wickedbank.wickedbank.model.userInfo.AccountHolder;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.Admin;
 import com.ironhack.wickedbank.wickedbank.model.userInfo.ThirdParty;
 import com.ironhack.wickedbank.wickedbank.repository.AccountRepository;
-import com.ironhack.wickedbank.wickedbank.repository.AdminRepository;
 import com.ironhack.wickedbank.wickedbank.repository.UserRepository;
 import com.ironhack.wickedbank.wickedbank.service.interfeces.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -24,9 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
@@ -35,7 +31,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
